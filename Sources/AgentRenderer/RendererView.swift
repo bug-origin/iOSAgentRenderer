@@ -38,6 +38,8 @@ public struct ComponentRegistry {
             "ComposedChart": { AnyView(ComposedChartComponent(context: $0)) },
             "SunburstChart": { AnyView(HierarchyChartComponent(context: $0)) },
             "SankeyChart": { AnyView(HierarchyChartComponent(context: $0)) },
+            "MusicPlayer": { AnyView(MusicPlayerComponent(context: $0)) },
+            "Weather": { AnyView(WeatherComponent(context: $0)) },
             "Map": { AnyView(MapComponent(context: $0)) },
             "Card": { AnyView(CardComponent(context: $0)) },
             "Stack": { context in

@@ -11,6 +11,7 @@ public struct RendererExample: Codable, Sendable {
     public static let names = [
         "sequence-card", "note-form", "shape-list", "chart-gallery",
         "form-wizard", "controls-gallery", "extended-input-gallery", "composition-gallery", "flowchart-demo",
+        "music-player", "map-route", "weather-forecast",
     ]
     public static func load(_ name: String) throws -> RendererExample {
         guard names.contains(name), let url = Bundle.module.url(forResource: name, withExtension: "json") else {

@@ -18,7 +18,7 @@ Render interactive agent responses as native SwiftUI cards on iOS 17+ and macOS 
 npx skills add bug-origin/iOSAgentRenderer --skill ios-agent-renderer
 ```
 
-如果只想让聊天模型输出卡片，把提示词全文发给它，再附上想展示的数据。第一次可以试「做一张平方数卡，显示 1 到 5 的平方，用表格和折线图呈现」。也可以把同一段放进后端模型的系统提示词，每次传入真实的 `context` 和可用的宿主动作。[复制生成卡片的提示词](https://raw.githubusercontent.com/bug-origin/iOSAgentRenderer/0.2.0/skills/ios-agent-renderer/references/card-prompt.md)
+如果只想让聊天模型输出卡片，把提示词全文发给它，再附上想展示的数据。第一次可以试「做一张平方数卡，显示 1 到 5 的平方，用表格和折线图呈现」。也可以把同一段放进后端模型的系统提示词，每次传入真实的 `context` 和可用的宿主动作。[复制生成卡片的提示词](https://raw.githubusercontent.com/bug-origin/iOSAgentRenderer/0.2.1/skills/ios-agent-renderer/references/card-prompt.md)
 
 ### 哪些约定是通用的？
 
@@ -31,10 +31,10 @@ npx skills add bug-origin/iOSAgentRenderer --skill ios-agent-renderer
 
 ## 安装
 
-在 Xcode 的 **File → Add Package Dependencies** 中添加 `https://github.com/bug-origin/iOSAgentRenderer.git`，选择 `0.2.0`，把 `AgentRenderer` 和 `AgentRendererCore` 加入展示卡片的 App target。使用 `Package.swift` 时，在包的 `dependencies` 中添加仓库依赖。
+在 Xcode 的 **File → Add Package Dependencies** 中添加 `https://github.com/bug-origin/iOSAgentRenderer.git`，选择 `0.2.1`，把 `AgentRenderer` 和 `AgentRendererCore` 加入展示卡片的 App target。使用 `Package.swift` 时，在包的 `dependencies` 中添加仓库依赖。
 
 ```swift
-.package(url: "https://github.com/bug-origin/iOSAgentRenderer.git", from: "0.2.0")
+.package(url: "https://github.com/bug-origin/iOSAgentRenderer.git", from: "0.2.1")
 ```
 
 在展示卡片的 target 的 `dependencies` 中加入这两个产品。
@@ -77,6 +77,16 @@ struct AgentCard: View {
 ## 给 Agent 的输入格式
 
 一张卡片包含 `protocolVersion`、`context`、`spec` 和 `state`。使用 `agent-ui/0.2` 作为版本，`spec.root` 指向 `spec.elements` 中的根组件，`state` 分为 `data`、`form` 和 `ui`。组件目录列出每种组件接受的属性、插槽和事件。可以先用备注表单跑通事件回调，再让 Agent 生成同样格式的文档。[可运行的备注表单](Examples/note.json) · [文档结构](Schema/document.schema.json) · [组件目录](Sources/AgentRendererCore/Resources/catalog.json)
+
+## 音乐、地图和天气
+
+| 卡片 | 渲染内容 | 示例 |
+| --- | --- | --- |
+| MusicPlayer | 曲名、艺人、可选封面和进度。App 接收播放或暂停动作，播放音频并回传最新状态。 | [音乐卡](Sources/AgentRendererExamples/Resources/music-player.json) |
+| Map | MapKit 标注、地点切换和路线连线。App 提供坐标与路线。 | [两点路线](Sources/AgentRendererExamples/Resources/map-route.json) |
+| Weather | 当前温度、天气图标，以及最多 14 天的最低和最高温。App 提供实况和预报。 | [天气卡](Sources/AgentRendererExamples/Resources/weather-forecast.json) |
+
+三个示例均使用合成数据。卡片继续使用 `agent-ui/0.2`。生成音乐和天气卡时，宿主需使用包含这两个组件的 0.2.1 或更高兼容版本。
 
 ## 运行示例
 

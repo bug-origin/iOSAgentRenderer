@@ -1690,6 +1690,75 @@
       ],
       "slots": [],
       "events": []
+    },
+    "MusicPlayer": {
+      "properties": {
+        "title": {
+          "type": "string"
+        },
+        "artist": {
+          "type": "string"
+        },
+        "playing": {
+          "type": "boolean"
+        },
+        "duration": {
+          "type": "number"
+        },
+        "elapsed": {
+          "type": "number"
+        },
+        "artwork": {
+          "type": "object"
+        }
+      },
+      "required": [
+        "title"
+      ],
+      "slots": [],
+      "events": [
+        "play",
+        "pause"
+      ]
+    },
+    "Weather": {
+      "properties": {
+        "location": {
+          "type": "string"
+        },
+        "temperature": {
+          "type": "number"
+        },
+        "unit": {
+          "type": "string",
+          "values": [
+            "celsius",
+            "fahrenheit"
+          ]
+        },
+        "condition": {
+          "type": "string",
+          "values": [
+            "clear",
+            "cloudy",
+            "rain",
+            "snow",
+            "storm",
+            "fog"
+          ]
+        },
+        "forecast": {
+          "type": "array"
+        }
+      },
+      "required": [
+        "location",
+        "temperature",
+        "unit",
+        "condition"
+      ],
+      "slots": [],
+      "events": []
     }
   },
   "actions": [

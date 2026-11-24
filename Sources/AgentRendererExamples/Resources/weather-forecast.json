@@ -1,0 +1,56 @@
+{
+  "name": "weather-forecast",
+  "title": "天气与预报",
+  "context": {
+    "threadId": "",
+    "viewId": "weather-forecast",
+    "revision": 1
+  },
+  "spec": {
+    "root": "root",
+    "elements": {
+      "root": {
+        "type": "Weather",
+        "props": {
+          "location": {
+            "$state": "/data/place"
+          },
+          "temperature": {
+            "$state": "/data/temperature"
+          },
+          "condition": {
+            "$state": "/data/condition"
+          },
+          "unit": "celsius",
+          "forecast": {
+            "$state": "/data/forecast"
+          }
+        },
+        "children": []
+      }
+    }
+  },
+  "state": {
+    "data": {
+      "place": "示例观测点",
+      "temperature": 18,
+      "condition": "clear",
+      "forecast": [
+        {
+          "label": "今天",
+          "condition": "clear",
+          "low": 12,
+          "high": 20
+        },
+        {
+          "label": "明天",
+          "condition": "rain",
+          "low": 11,
+          "high": 16
+        }
+      ]
+    },
+    "form": {},
+    "ui": {}
+  }
+}

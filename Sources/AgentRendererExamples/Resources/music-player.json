@@ -1,0 +1,67 @@
+{
+  "name": "music-player",
+  "title": "音乐播放卡",
+  "context": {
+    "threadId": "",
+    "viewId": "music-player",
+    "revision": 1
+  },
+  "spec": {
+    "root": "root",
+    "elements": {
+      "root": {
+        "type": "MusicPlayer",
+        "props": {
+          "title": {
+            "$state": "/data/title"
+          },
+          "artist": {
+            "$state": "/data/artist"
+          },
+          "playing": {
+            "$state": "/data/playing"
+          },
+          "duration": {
+            "$state": "/data/duration"
+          },
+          "elapsed": {
+            "$state": "/data/elapsed"
+          }
+        },
+        "children": [],
+        "on": {
+          "play": {
+            "action": "dispatch",
+            "params": {
+              "actionId": "sample.audio.play",
+              "trackId": {
+                "$state": "/data/id"
+              }
+            }
+          },
+          "pause": {
+            "action": "dispatch",
+            "params": {
+              "actionId": "sample.audio.pause",
+              "trackId": {
+                "$state": "/data/id"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "state": {
+    "data": {
+      "id": "tone-1",
+      "title": "四音练习",
+      "artist": "合成音色示例",
+      "playing": false,
+      "duration": 90,
+      "elapsed": 18
+    },
+    "form": {},
+    "ui": {}
+  }
+}

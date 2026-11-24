@@ -192,6 +192,30 @@ public struct RenderEngine: Sendable {
         if type == "Followup" {
             guard bindings["value"] != nil, let prompts = props["prompts"]?.array, prompts.count <= 12, prompts.allSatisfy({ $0.string?.isEmpty == false }) else { throw RendererError("Followup needs a writable value and up to 12 prompts") }
         }
+        if type == "MusicPlayer" {
+            if let artwork = props["artwork"] { try InformationData.validateImage(artwork) }
+            guard props["title"]?.string?.isEmpty == false else { throw RendererError("MusicPlayer needs a title") }
+            if props["duration"] != nil || props["elapsed"] != nil {
+                let elapsed = props["elapsed"]?.number ?? 0
+                guard let duration = props["duration"]?.number, duration > 0, duration <= Double(Int32.max),
+                      (0...duration).contains(elapsed) else { throw RendererError("Invalid playback time in seconds") }
+            }
+        }
+        if type == "Weather" {
+            guard props["location"]?.string?.isEmpty == false, props["temperature"]?.number?.isFinite == true else {
+                throw RendererError("Weather needs a location and a finite temperature")
+            }
+            if let days = props["forecast"]?.array {
+                let conditions = catalog.components["Weather"]?.properties["condition"]?.values ?? []
+                guard days.count <= 14 else { throw RendererError("Forecast supports up to 14 days") }
+                for day in days {
+                    guard let row = day.object, Set(row.keys) == ["label", "low", "high", "condition"],
+                          row["label"]?.string?.isEmpty == false, let condition = row["condition"], conditions.contains(condition),
+                          let low = row["low"]?.number, let high = row["high"]?.number, low.isFinite, high.isFinite, low <= high
+                    else { throw RendererError("Invalid daily forecast") }
+                }
+            }
+        }
         if type == "Map" { try MapData.validate(props) }
         if ExtendedInput.types.contains(type) { try ExtendedInput.validate(type: type, props: props, bindings: bindings) }
         if type == "Icon", let size = props["size"]?.number {

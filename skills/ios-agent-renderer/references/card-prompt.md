@@ -13,7 +13,13 @@
 - `Table` 的 `columns` 是含 `key` 和 `label` 的对象数组，`rows` 是按这些键存标量的对象数组。`Chart` 的 `points` 是 `{ "x": "2", "y": 4 }` 形状的数组，`x` 是非空字符串，`y` 是数值。
 - `TextField` 使用字符串 `label` 和可写绑定 `value`，必填时加 `"required":true`。`Button` 使用 `label`，点击绑定写在节点的 `on.press` 中。其他组件、属性、枚举和事件以宿主提供的同版本组件目录及示例为准。
 
-需要更多组件时，可以读取完整目录和交互示例。离线时用上面列出的组件就能生成信息卡、趋势卡和表单。[组件目录](https://raw.githubusercontent.com/bug-origin/iOSAgentRenderer/0.2.0/Sources/AgentRendererCore/Resources/catalog.json) · [完整表单 JSON](https://raw.githubusercontent.com/bug-origin/iOSAgentRenderer/0.2.0/Examples/note.json)
+生成音乐、地图或天气卡时，先确认宿主组件目录支持对应类型。
+
+- `MusicPlayer` 需要 `title`。可传 `artist`、布尔值 `playing` 和封面 `artwork: {"src":"https://…","alt":"…"}`。进度以秒计，提供正数 `duration` 后可加 `elapsed`。在 `on.play`、`on.pause` 中绑定宿主提供的动作，播放状态取自宿主。
+- `Map` 需要 `locations` 数组，每项包含唯一字符串 `id`、`title` 和数值 `latitude`、`longitude`。连线可用 `routes: [{"id":"ab","stopIds":["a","b"]}]`，地点 ID 必须已存在。
+- `Weather` 需要 `location`、数值 `temperature`、`unit`（celsius / fahrenheit）和 `condition`（clear / cloudy / rain / snow / storm / fog）。可选的 `forecast` 最多 14 项，每项包含 `label`、`condition`、`low`、`high`。实况与预报取自输入。
+
+需要更多组件时，可以读取完整目录和交互示例。离线时用上面列出的组件就能生成信息卡、趋势卡和表单。[组件目录](https://raw.githubusercontent.com/bug-origin/iOSAgentRenderer/0.2.1/Sources/AgentRendererCore/Resources/catalog.json) · [完整表单 JSON](https://raw.githubusercontent.com/bug-origin/iOSAgentRenderer/0.2.1/Examples/note.json)
 
 数据仅取自输入。缺少输入数据时可用文字说明需要补充的内容。需要提交时，用宿主给的 `actionId` 及参数名。`dispatch` 调用宿主操作。`submitForm` 还需 `formPath` 指向 `/form` 下的表单，通过字段校验后调用宿主。如需传递输入，在宿主指定的参数里写 `{"$state":"/form/对应路径"}`。宿主动作清单为空时可以展示信息或使用本地编辑。按钮的 `setState` 只需要 `statePath` 和 `value`。
 

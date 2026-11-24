@@ -67,7 +67,7 @@ struct CompositionComponent: View {
     }
     private var itemContainsControls: Bool {
         func interactive(_ node: ResolvedNode) -> Bool {
-            if !node.bindings.isEmpty || ["Button", "Followup", "Tabs", "Accordion", "Image", "Map", "ItemCard"].contains(node.type) { return true }
+            if !node.bindings.isEmpty || ["Button", "Followup", "Tabs", "Accordion", "Image", "MusicPlayer", "Map", "ItemCard"].contains(node.type) { return true }
             return node.children.contains(where: interactive) || node.slots.values.joined().contains(where: interactive)
         }
         return context.node.children.contains(where: interactive) || context.node.slots.values.joined().contains(where: interactive)

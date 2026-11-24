@@ -1,0 +1,58 @@
+{
+  "name": "map-route",
+  "title": "地图与路线",
+  "context": {
+    "threadId": "",
+    "viewId": "map-route",
+    "revision": 1
+  },
+  "spec": {
+    "root": "root",
+    "elements": {
+      "root": {
+        "type": "Map",
+        "props": {
+          "title": "两点连线 · 合成坐标",
+          "locations": {
+            "$state": "/data/points"
+          },
+          "routes": {
+            "$state": "/data/routes"
+          },
+          "initialLocationId": "a"
+        },
+        "children": []
+      }
+    }
+  },
+  "state": {
+    "data": {
+      "points": [
+        {
+          "id": "a",
+          "title": "示例点 A",
+          "latitude": 0,
+          "longitude": 0
+        },
+        {
+          "id": "b",
+          "title": "示例点 B",
+          "latitude": 0.015,
+          "longitude": 0.015
+        }
+      ],
+      "routes": [
+        {
+          "id": "ab",
+          "label": "A → B",
+          "stopIds": [
+            "a",
+            "b"
+          ]
+        }
+      ]
+    },
+    "form": {},
+    "ui": {}
+  }
+}
