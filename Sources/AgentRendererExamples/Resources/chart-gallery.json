@@ -1,0 +1,102 @@
+{
+  "name": "chart-gallery",
+  "title": "同一数列的六种图形",
+  "context": {
+    "threadId": "",
+    "viewId": "chart-gallery",
+    "revision": 1
+  },
+  "spec": {
+    "root": "root",
+    "elements": {
+      "root": {
+        "type": "Card",
+        "props": {
+          "title": "平方数的六种画法"
+        },
+        "children": [
+          "kind",
+          "chart"
+        ]
+      },
+      "kind": {
+        "type": "Select",
+        "props": {
+          "label": "图形",
+          "value": {
+            "$bindState": "/ui/chartKind"
+          },
+          "options": [
+            {
+              "label": "折线",
+              "value": "line"
+            },
+            {
+              "label": "面积",
+              "value": "area"
+            },
+            {
+              "label": "柱状",
+              "value": "bar"
+            },
+            {
+              "label": "散点",
+              "value": "scatter"
+            },
+            {
+              "label": "饼图",
+              "value": "pie"
+            },
+            {
+              "label": "环形",
+              "value": "donut"
+            }
+          ]
+        },
+        "children": []
+      },
+      "chart": {
+        "type": "Chart",
+        "props": {
+          "title": "n²",
+          "kind": {
+            "$state": "/ui/chartKind"
+          },
+          "points": {
+            "$state": "/ui/chartPoints"
+          }
+        },
+        "children": []
+      }
+    }
+  },
+  "state": {
+    "data": {},
+    "form": {},
+    "ui": {
+      "chartKind": "line",
+      "chartPoints": [
+        {
+          "x": "1",
+          "y": 1
+        },
+        {
+          "x": "2",
+          "y": 4
+        },
+        {
+          "x": "3",
+          "y": 9
+        },
+        {
+          "x": "4",
+          "y": 16
+        },
+        {
+          "x": "5",
+          "y": 25
+        }
+      ]
+    }
+  }
+}

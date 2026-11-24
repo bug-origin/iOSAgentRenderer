@@ -1,0 +1,88 @@
+{
+  "protocolVersion": "agent-ui/0.2",
+  "context": {
+    "threadId": "",
+    "viewId": "note-form",
+    "revision": 1
+  },
+  "spec": {
+    "root": "root",
+    "elements": {
+      "root": {
+        "type": "Card",
+        "props": {
+          "title": "一行备注"
+        },
+        "children": [
+          "name",
+          "actions"
+        ]
+      },
+      "name": {
+        "type": "TextField",
+        "props": {
+          "label": "内容",
+          "value": {
+            "$bindState": "/form/note/name"
+          },
+          "required": true
+        },
+        "children": []
+      },
+      "actions": {
+        "type": "ActionGroup",
+        "props": {},
+        "children": [
+          "clear",
+          "submit"
+        ]
+      },
+      "clear": {
+        "type": "Button",
+        "props": {
+          "label": "清空",
+          "variant": "secondary"
+        },
+        "children": [],
+        "on": {
+          "press": {
+            "action": "setState",
+            "params": {
+              "statePath": "/form/note/name",
+              "value": ""
+            }
+          }
+        }
+      },
+      "submit": {
+        "type": "Button",
+        "props": {
+          "label": "使用备注",
+          "variant": "primary"
+        },
+        "children": [],
+        "on": {
+          "press": {
+            "action": "submitForm",
+            "params": {
+              "actionId": "sample.apply",
+              "formPath": "/form/note",
+              "input": {
+                "$state": "/form/note"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "state": {
+    "data": {},
+    "form": {
+      "note": {
+        "name": "A"
+      }
+    },
+    "ui": {}
+  }
+}

@@ -1,0 +1,150 @@
+{
+  "name": "sequence-card",
+  "title": "平方数",
+  "context": {
+    "threadId": "",
+    "viewId": "sequence-card",
+    "revision": 1
+  },
+  "spec": {
+    "root": "root",
+    "elements": {
+      "root": {
+        "type": "Card",
+        "props": {
+          "title": "平方数"
+        },
+        "children": [
+          "formula",
+          "count",
+          "curve",
+          "table"
+        ],
+        "slots": {
+          "footer": [
+            "actions"
+          ]
+        }
+      },
+      "formula": {
+        "type": "Text",
+        "props": {
+          "text": "y = n²   ·   n = 1…5",
+          "variant": "caption"
+        },
+        "children": []
+      },
+      "count": {
+        "type": "Metric",
+        "props": {
+          "label": "点数",
+          "value": {
+            "$state": "/data/sequence/count"
+          }
+        },
+        "children": []
+      },
+      "curve": {
+        "type": "Chart",
+        "props": {
+          "title": "平方曲线",
+          "kind": "line",
+          "points": {
+            "$state": "/data/sequence/points"
+          }
+        },
+        "children": []
+      },
+      "table": {
+        "type": "Table",
+        "props": {
+          "columns": [
+            {
+              "key": "x",
+              "label": "n"
+            },
+            {
+              "key": "y",
+              "label": "n²"
+            }
+          ],
+          "rows": {
+            "$state": "/data/sequence/points"
+          }
+        },
+        "children": []
+      },
+      "actions": {
+        "type": "ActionGroup",
+        "props": {},
+        "children": [
+          "details",
+          "next"
+        ]
+      },
+      "details": {
+        "type": "Button",
+        "props": {
+          "label": "查看公式",
+          "variant": "secondary"
+        },
+        "children": [],
+        "on": {
+          "press": {
+            "action": "dispatch",
+            "params": {
+              "actionId": "sample.inspect"
+            }
+          }
+        }
+      },
+      "next": {
+        "type": "Button",
+        "props": {
+          "label": "下一项",
+          "variant": "primary"
+        },
+        "children": [],
+        "on": {
+          "press": {
+            "action": "dispatch",
+            "params": {
+              "actionId": "sample.advance"
+            }
+          }
+        }
+      }
+    }
+  },
+  "state": {
+    "data": {
+      "sequence": {
+        "count": 5,
+        "points": [
+          {
+            "x": "1",
+            "y": 1
+          },
+          {
+            "x": "2",
+            "y": 4
+          },
+          {
+            "x": "3",
+            "y": 9
+          },
+          {
+            "x": "4",
+            "y": 16
+          },
+          {
+            "x": "5",
+            "y": 25
+          }
+        ]
+      }
+    },
+    "form": {},
+    "ui": {}
+  }
+}

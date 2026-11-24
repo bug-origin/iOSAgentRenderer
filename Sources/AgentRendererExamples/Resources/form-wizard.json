@@ -1,0 +1,120 @@
+{
+  "name": "form-wizard",
+  "title": "分步编辑",
+  "context": {
+    "threadId": "",
+    "viewId": "form-wizard",
+    "revision": 1
+  },
+  "spec": {
+    "root": "root",
+    "elements": {
+      "root": {
+        "type": "Card",
+        "props": {
+          "title": "写一条备注"
+        },
+        "children": [
+          "wizard"
+        ]
+      },
+      "wizard": {
+        "type": "Steps",
+        "props": {
+          "value": {
+            "$bindState": "/ui/step"
+          },
+          "labels": [
+            "标题",
+            "正文",
+            "预览"
+          ]
+        },
+        "children": [
+          "name",
+          "notes",
+          "preview"
+        ]
+      },
+      "name": {
+        "type": "TextField",
+        "props": {
+          "label": "标题",
+          "required": true,
+          "value": {
+            "$bindState": "/form/note/name"
+          }
+        },
+        "children": [],
+        "on": {
+          "focus": {
+            "action": "setState",
+            "params": {
+              "statePath": "/ui/lastEvent",
+              "value": "focus"
+            }
+          },
+          "blur": {
+            "action": "setState",
+            "params": {
+              "statePath": "/ui/lastEvent",
+              "value": "blur"
+            }
+          }
+        }
+      },
+      "notes": {
+        "type": "TextArea",
+        "props": {
+          "label": "正文",
+          "required": true,
+          "rows": 3,
+          "value": {
+            "$bindState": "/form/note/notes"
+          }
+        },
+        "children": []
+      },
+      "preview": {
+        "type": "Stack",
+        "props": {},
+        "children": [
+          "previewTitle",
+          "previewText"
+        ]
+      },
+      "previewTitle": {
+        "type": "Text",
+        "props": {
+          "variant": "heading",
+          "text": {
+            "$state": "/form/note/name"
+          }
+        },
+        "children": []
+      },
+      "previewText": {
+        "type": "Text",
+        "props": {
+          "text": {
+            "$state": "/form/note/notes"
+          }
+        },
+        "children": []
+      }
+    }
+  },
+  "state": {
+    "data": {},
+    "form": {
+      "note": {
+        "name": "",
+        "notes": ""
+      }
+    },
+    "ui": {
+      "step": 0,
+      "lastEvent": ""
+    }
+  }
+}

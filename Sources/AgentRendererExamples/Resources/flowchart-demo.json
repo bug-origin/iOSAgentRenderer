@@ -1,0 +1,69 @@
+{
+  "name": "flowchart-demo",
+  "title": "奇偶判断",
+  "context": {
+    "threadId": "",
+    "viewId": "flowchart-demo",
+    "revision": 1
+  },
+  "spec": {
+    "root": "root",
+    "elements": {
+      "root": {
+        "type": "Card",
+        "props": {
+          "title": "奇偶判断"
+        },
+        "children": [
+          "graph"
+        ]
+      },
+      "graph": {
+        "type": "Flowchart",
+        "props": {
+          "nodes": [
+            {
+              "id": "n",
+              "label": "整数 n"
+            },
+            {
+              "id": "mod",
+              "label": "可被 2 整除？",
+              "kind": "decision"
+            },
+            {
+              "id": "even",
+              "label": "偶数"
+            },
+            {
+              "id": "odd",
+              "label": "奇数"
+            }
+          ],
+          "edges": [
+            {
+              "from": "n",
+              "to": "mod"
+            },
+            {
+              "from": "mod",
+              "to": "even",
+              "label": "是"
+            },
+            {
+              "from": "mod",
+              "to": "odd",
+              "label": "否"
+            }
+          ]
+        },
+        "children": []
+      }
+    }
+  },
+  "state": {
+    "data": {},
+    "form": {},
+    "ui": {}
+  }
+}

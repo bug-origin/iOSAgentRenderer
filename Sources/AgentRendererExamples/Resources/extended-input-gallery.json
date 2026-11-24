@@ -1,0 +1,123 @@
+{
+  "name": "extended-input-gallery",
+  "title": "日期和图层",
+  "context": {
+    "threadId": "",
+    "viewId": "extended-input-gallery",
+    "revision": 1
+  },
+  "spec": {
+    "root": "root",
+    "elements": {
+      "root": {
+        "type": "Card",
+        "props": {
+          "title": "日期和图层"
+        },
+        "children": [
+          "date",
+          "range",
+          "layers",
+          "count",
+          "submit"
+        ]
+      },
+      "date": {
+        "type": "DatePicker",
+        "props": {
+          "label": "日期",
+          "value": {
+            "$bindState": "/form/fields/date"
+          },
+          "required": true
+        },
+        "children": []
+      },
+      "range": {
+        "type": "DateRangePicker",
+        "props": {
+          "label": "日期范围",
+          "value": {
+            "$bindState": "/form/fields/range"
+          }
+        },
+        "children": []
+      },
+      "layers": {
+        "type": "CheckboxGroup",
+        "props": {
+          "label": "图层",
+          "value": {
+            "$bindState": "/form/fields/layers"
+          },
+          "options": [
+            {
+              "label": "网格",
+              "value": "grid"
+            },
+            {
+              "label": "坐标轴",
+              "value": "axes"
+            },
+            {
+              "label": "锁定图层",
+              "value": "disabled",
+              "disabled": true
+            }
+          ]
+        },
+        "children": []
+      },
+      "count": {
+        "type": "NumberField",
+        "props": {
+          "label": "线条数量",
+          "value": {
+            "$bindState": "/form/fields/count"
+          },
+          "min": 1,
+          "max": 12,
+          "step": 1
+        },
+        "children": []
+      },
+      "submit": {
+        "type": "Button",
+        "props": {
+          "label": "应用",
+          "variant": "primary"
+        },
+        "children": [],
+        "on": {
+          "press": {
+            "action": "submitForm",
+            "params": {
+              "actionId": "sample.apply",
+              "formPath": "/form/fields",
+              "input": {
+                "$state": "/form/fields"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "state": {
+    "data": {},
+    "form": {
+      "fields": {
+        "date": "2000-01-01",
+        "range": [
+          "2000-01-01",
+          "2000-01-02"
+        ],
+        "layers": [
+          "axes"
+        ],
+        "count": 1
+      }
+    },
+    "ui": {}
+  }
+}

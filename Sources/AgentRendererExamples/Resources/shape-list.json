@@ -1,0 +1,128 @@
+{
+  "name": "shape-list",
+  "title": "图形筛选",
+  "context": {
+    "threadId": "",
+    "viewId": "shape-list",
+    "revision": 1
+  },
+  "spec": {
+    "root": "root",
+    "elements": {
+      "root": {
+        "type": "Stack",
+        "props": {},
+        "children": [
+          "filter",
+          "shapes"
+        ]
+      },
+      "filter": {
+        "type": "Select",
+        "props": {
+          "label": "显示",
+          "value": {
+            "$bindState": "/ui/filter"
+          },
+          "options": [
+            {
+              "label": "全部",
+              "value": "all"
+            },
+            {
+              "label": "多边形",
+              "value": "polygon"
+            }
+          ]
+        },
+        "children": []
+      },
+      "shapes": {
+        "type": "Stack",
+        "props": {},
+        "children": [
+          "shape"
+        ],
+        "repeat": {
+          "statePath": "/data/shapes",
+          "key": "id"
+        }
+      },
+      "shape": {
+        "type": "Card",
+        "props": {
+          "title": {
+            "$item": "label"
+          }
+        },
+        "children": [
+          "selectShape"
+        ],
+        "visible": {
+          "$or": [
+            {
+              "$state": "/ui/filter",
+              "eq": "all"
+            },
+            {
+              "$and": [
+                {
+                  "$state": "/ui/filter",
+                  "eq": "polygon"
+                },
+                {
+                  "$item": "kind",
+                  "eq": "polygon"
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "selectShape": {
+        "type": "Button",
+        "props": {
+          "label": "选择图形",
+          "variant": "secondary"
+        },
+        "children": [],
+        "on": {
+          "press": {
+            "action": "dispatch",
+            "params": {
+              "actionId": "sample.choose",
+              "shapeId": {
+                "$item": "id"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "state": {
+    "data": {
+      "shapes": [
+        {
+          "id": "triangle",
+          "label": "三角形",
+          "kind": "polygon"
+        },
+        {
+          "id": "circle",
+          "label": "圆形",
+          "kind": "circle"
+        },
+        {
+          "id": "square",
+          "label": "正方形",
+          "kind": "polygon"
+        }
+      ]
+    },
+    "form": {},
+    "ui": {
+      "filter": "all"
+    }
+  }
+}

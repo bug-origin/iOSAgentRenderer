@@ -1,0 +1,121 @@
+{
+  "name": "controls-gallery",
+  "title": "网格设置",
+  "context": {
+    "threadId": "",
+    "viewId": "controls-gallery",
+    "revision": 1
+  },
+  "spec": {
+    "root": "root",
+    "elements": {
+      "root": {
+        "type": "Card",
+        "props": {
+          "title": "网格设置"
+        },
+        "children": [
+          "size",
+          "mode",
+          "enabled",
+          "disabled",
+          "submit"
+        ]
+      },
+      "size": {
+        "type": "Slider",
+        "props": {
+          "label": "格线间距",
+          "value": {
+            "$bindState": "/form/controls/size"
+          },
+          "min": 0,
+          "max": 100,
+          "step": 5,
+          "unit": "pt"
+        },
+        "children": []
+      },
+      "mode": {
+        "type": "Radio",
+        "props": {
+          "label": "布局",
+          "value": {
+            "$bindState": "/form/controls/mode"
+          },
+          "required": true,
+          "options": [
+            {
+              "label": "紧凑",
+              "value": "compact"
+            },
+            {
+              "label": "展开",
+              "value": "expanded"
+            },
+            {
+              "label": "禁用选项",
+              "value": "unavailable",
+              "disabled": true
+            }
+          ]
+        },
+        "children": []
+      },
+      "enabled": {
+        "type": "Checkbox",
+        "props": {
+          "label": "显示网格",
+          "value": {
+            "$bindState": "/form/controls/enabled"
+          },
+          "required": true
+        },
+        "children": []
+      },
+      "disabled": {
+        "type": "Switch",
+        "props": {
+          "label": "锁定原点",
+          "disabled": true,
+          "value": {
+            "$bindState": "/form/controls/locked"
+          }
+        },
+        "children": []
+      },
+      "submit": {
+        "type": "Button",
+        "props": {
+          "label": "应用网格设置",
+          "variant": "primary"
+        },
+        "children": [],
+        "on": {
+          "press": {
+            "action": "submitForm",
+            "params": {
+              "actionId": "sample.apply",
+              "formPath": "/form/controls",
+              "input": {
+                "$state": "/form/controls"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "state": {
+    "data": {},
+    "form": {
+      "controls": {
+        "size": 40,
+        "mode": "compact",
+        "enabled": false,
+        "locked": false
+      }
+    },
+    "ui": {}
+  }
+}
