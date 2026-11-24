@@ -1,52 +1,60 @@
 # iOSAgentRenderer
 
-Render interactive agent responses as native SwiftUI cards on iOS 17+ and macOS 14+. The agent sends JSON and the app handles actions. Built with Swift 6, SwiftUI, Charts and MapKit.
+iOSAgentRenderer turns JSON from an agent into native SwiftUI cards. An agent can return a form, a chart, a map, or a music player in a conversation. The renderer draws the card and tracks edits. Your app supplies the data and handles actions such as saving a note or playing a track.
 
-把 Agent 返回的 JSON 直接显示成原生卡片。内置表单、图表、可筛选的表格和地图。卡片自己管理输入和选择，点击按钮时由 App 处理回调。
+Requires Swift 6, with iOS 17+ or macOS 14+ as the deployment target. [View a card on iPhone](Documentation/sequence-card.png)
 
-<img src="Documentation/sequence-card.png" width="280" alt="平方数卡片，显示点数、曲线和数值表">
+## Install with Swift Package Manager
 
-## 直接交给 Agent
+In Xcode, choose **File > Add Package Dependencies**, enter `https://github.com/bug-origin/iOSAgentRenderer.git`, and select version `0.2.1` or a compatible later version. Add **AgentRenderer** and **AgentRendererCore** to the target that displays the cards.
 
-把下面这句话发给能操作项目的编程 Agent，就可以从一张卡片开始。
-
-> 请用 Swift Package Manager 把 https://github.com/bug-origin/iOSAgentRenderer 接到当前 iOS App。按仓库里的 ios-agent-renderer Skill 做一张能填写和清空备注的卡片，运行项目验证。
-
-在使用 Agent Skills 的开发工具中，也可以在自己的项目目录运行这条命令，选择要安装到的客户端。以后可以直接说「用 ios-agent-renderer 展示前五个平方数」。[Skill 文件](skills/ios-agent-renderer/SKILL.md) · [Skills CLI](https://skills.sh/docs/cli)
-
-```sh
-npx skills add bug-origin/iOSAgentRenderer --skill ios-agent-renderer
-```
-
-如果只想让聊天模型输出卡片，把提示词全文发给它，再附上想展示的数据。第一次可以试「做一张平方数卡，显示 1 到 5 的平方，用表格和折线图呈现」。也可以把同一段放进后端模型的系统提示词，每次传入真实的 `context` 和可用的宿主动作。[复制生成卡片的提示词](https://raw.githubusercontent.com/bug-origin/iOSAgentRenderer/0.2.1/skills/ios-agent-renderer/references/card-prompt.md)
-
-### 哪些约定是通用的？
-
-| 部分 | 采用的约定 |
-| --- | --- |
-| App 安装 Swift 库 | Xcode 内置的 Swift Package Manager，按仓库 URL 和版本添加依赖。[Apple 说明](https://developer.apple.com/documentation/xcode/adding-package-dependencies-to-your-app) |
-| Agent 加载 Skill | 开放的 Agent Skills 格式，入口是带 `name` 和 `description` 的 `SKILL.md`。安装入口由客户端提供。[Agent Skills 规范](https://agentskills.io/specification) |
-| 描述 JSON 结构 | Schema 使用 JSON Schema Draft 2020-12。[JSON Schema 规范](https://json-schema.org/draft/2020-12) |
-| 卡片怎么显示、点击后做什么 | `agent-ui/0.2` 是本库公开定义的协议。组件、状态绑定和动作按这个版本解释，其他渲染器需要实现相同的约定。JSON Schema 校验结构，`renderer-validate` 还会检查组件属性和绑定。[卡片契约](Schema/document.schema.json) · [动作结构](Schema/action.schema.json) |
-
-## 安装
-
-在 Xcode 的 **File → Add Package Dependencies** 中添加 `https://github.com/bug-origin/iOSAgentRenderer.git`，选择 `0.2.1`，把 `AgentRenderer` 和 `AgentRendererCore` 加入展示卡片的 App target。使用 `Package.swift` 时，在包的 `dependencies` 中添加仓库依赖。
+In a `Package.swift` manifest, the package dependency goes in the package's `dependencies` array.
 
 ```swift
 .package(url: "https://github.com/bug-origin/iOSAgentRenderer.git", from: "0.2.1")
 ```
 
-在展示卡片的 target 的 `dependencies` 中加入这两个产品。
+The target that displays the cards needs both products.
 
 ```swift
 .product(name: "AgentRenderer", package: "iOSAgentRenderer"),
 .product(name: "AgentRendererCore", package: "iOSAgentRenderer")
 ```
 
-## 在对话里显示一张卡片
+## Render your first card
 
-收到 JSON 后为这条消息创建一次会话。用 `RendererView` 显示它，把 `onAction` 接到 App 的动作处理函数，返回实际执行结果。
+This card has a text field and a Clear button. Type a note and tap Clear to reset the field locally.
+
+```json
+{
+  "protocolVersion": "agent-ui/0.2",
+  "context": { "threadId": "", "viewId": "note", "revision": 1 },
+  "spec": {
+    "root": "card",
+    "elements": {
+      "card": {
+        "type": "Card",
+        "props": { "title": "Quick note" },
+        "children": ["note", "clear"]
+      },
+      "note": {
+        "type": "TextField",
+        "props": { "label": "Note", "value": { "$bindState": "/form/text" } },
+        "children": []
+      },
+      "clear": {
+        "type": "Button",
+        "props": { "label": "Clear" },
+        "children": [],
+        "on": { "press": { "action": "setState", "params": { "statePath": "/form/text", "value": "" } } }
+      }
+    }
+  },
+  "state": { "data": {}, "form": { "text": "My first note" }, "ui": {} }
+}
+```
+
+When a message arrives, decode its JSON and create a session on the main actor. Keep one session per card so a SwiftUI refresh or a scroll offscreen preserves the draft.
 
 ```swift
 import AgentRenderer
@@ -72,31 +80,62 @@ struct AgentCard: View {
 }
 ```
 
-消息离开屏幕后保留会话，返回时就能继续填写。同一卡片收到新修订时，调用 `session.replace(spec:state:context:)`。
+For host actions, match `envelope.params["actionId"]` to an operation your app supports, validate its inputs, and return the outcome from `onAction`. When the agent sends a new revision of the same card, call `try session.replace(spec:state:context:)` with the updated document. [Form with a submit action](Examples/note.json)
 
-## 给 Agent 的输入格式
+## Give it to your agent
 
-一张卡片包含 `protocolVersion`、`context`、`spec` 和 `state`。使用 `agent-ui/0.2` 作为版本，`spec.root` 指向 `spec.elements` 中的根组件，`state` 分为 `data`、`form` 和 `ui`。组件目录列出每种组件接受的属性、插槽和事件。可以先用备注表单跑通事件回调，再让 Agent 生成同样格式的文档。[可运行的备注表单](Examples/note.json) · [文档结构](Schema/document.schema.json) · [组件目录](Sources/AgentRendererCore/Resources/catalog.json)
+Paste this request into a coding agent that can edit your app.
 
-## 音乐、地图和天气
+> Add https://github.com/bug-origin/iOSAgentRenderer to this app with Swift Package Manager. Follow the repository's ios-agent-renderer skill. Show an editable note card in the conversation, then build the app and verify that tapping Clear empties the field.
 
-| 卡片 | 渲染内容 | 示例 |
-| --- | --- | --- |
-| MusicPlayer | 曲名、艺人、可选封面和进度。App 接收播放或暂停动作，播放音频并回传最新状态。 | [音乐卡](Sources/AgentRendererExamples/Resources/music-player.json) |
-| Map | MapKit 标注、地点切换和路线连线。App 提供坐标与路线。 | [两点路线](Sources/AgentRendererExamples/Resources/map-route.json) |
-| Weather | 当前温度、天气图标，以及最多 14 天的最低和最高温。App 提供实况和预报。 | [天气卡](Sources/AgentRendererExamples/Resources/weather-forecast.json) |
-
-三个示例均使用合成数据。卡片继续使用 `agent-ui/0.2`。生成音乐和天气卡时，宿主需使用包含这两个组件的 0.2.1 或更高兼容版本。
-
-## 运行示例
+Run this command from your project directory to install the skill.
 
 ```sh
-swift test
-swift run renderer-validate < Examples/note.json
+npx skills add bug-origin/iOSAgentRenderer --skill ios-agent-renderer
 ```
 
-要在 App 中浏览全部示例，将 `AgentRendererExamples` 加入 target，显示 `RendererGallery()`。图库会在本地显示动作结果。macOS 上也可以用 `swift run renderer-snapshots /tmp/agent-cards sequence-card` 导出预览图。
+For a model that only produces JSON, give it the card prompt, the card's `context`, the data to display, and the actions your app supports. For example, ask it to plot the squares of the numbers 1 through 5 and show the values in a table. [Agent skill](skills/ios-agent-renderer/SKILL.md) · [Standalone card prompt](skills/ios-agent-renderer/references/card-prompt.md)
 
-## 设计和许可
+## Music, maps, and weather
 
-默认主题参考 HeroUI Native，部分组件的交互参考 HeroUI Agents 的公开设计。图标使用 Lucide。库以 Apache-2.0 发布。[许可证](LICENSE) · [第三方署名](THIRD_PARTY_NOTICES.md)
+| Component | What the card displays | What your app supplies |
+| --- | --- | --- |
+| [MusicPlayer](Sources/AgentRendererExamples/Resources/music-player.json) | Track title, artist, optional artwork, playback progress, and a play or pause control | Track metadata and playback state. The app handles the play and pause events. |
+| [Map](Sources/AgentRendererExamples/Resources/map-route.json) | Selectable MapKit markers and lines connecting stops | Coordinates, location IDs, and the order of stops on each route. |
+| [Weather](Sources/AgentRendererExamples/Resources/weather-forecast.json) | Current conditions and up to 14 days of forecast highs and lows in Celsius or Fahrenheit | A location label, observations, forecast values, and the temperature unit. |
+
+All three examples use synthetic data. Music and weather cards require package version 0.2.1 or later.
+
+## Card format
+
+`agent-ui/0.2` is the card protocol defined by this library. Its version is independent of the Swift package version. Every document contains four fields.
+
+| Field | Purpose |
+| --- | --- |
+| `protocolVersion` | Selects the card format. Use `"agent-ui/0.2"`. |
+| `context` | Identifies the conversation, card, and revision through `threadId`, `viewId`, and `revision`. |
+| `spec` | Declares the component tree. `root` names the first element, and `elements` maps keys to component definitions. |
+| `state` | Holds read-only input in `data`, editable values in `form`, and local display state in `ui`. |
+
+The schemas use JSON Schema Draft 2020-12. The component catalog lists supported properties, events, and slots. The native validator also resolves the tree and checks component values and bindings. [Document schema](Schema/document.schema.json) · [Action schema](Schema/action.schema.json) · [Component catalog](Sources/AgentRendererCore/Resources/catalog.json)
+
+The package uses Swift Package Manager for installation and the Agent Skills format for agent instructions. [Apple package dependency guide](https://developer.apple.com/documentation/xcode/adding-package-dependencies-to-your-app) · [Agent Skills specification](https://agentskills.io/specification)
+
+## Validate and preview
+
+Run the validator from a checkout of this repository on macOS. It prints `valid` when the example passes.
+
+```sh
+swift run renderer-validate < Examples/note.json
+swift test
+```
+
+To browse the examples in an app, link the `AgentRendererExamples` product, import it, and display `RendererGallery()`. The gallery displays action callbacks locally. The snapshot command exports a SwiftUI preview on macOS.
+
+```sh
+swift run renderer-snapshots /tmp/agent-cards music-player
+```
+
+## Design and license
+
+The default theme draws on HeroUI Native. Some component interactions follow the public HeroUI Agents designs. The bundled icons come from Lucide. iOSAgentRenderer is available under Apache License 2.0. [License](LICENSE) · [Third-party notices](THIRD_PARTY_NOTICES.md)
