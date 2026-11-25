@@ -4,6 +4,12 @@ iOSAgentRenderer turns JSON from an agent into native SwiftUI cards. An agent ca
 
 Requires Swift 6, with iOS 17+ or macOS 14+ as the deployment target. [View a card on iPhone](Documentation/sequence-card.png)
 
+## Open the iOS gallery
+
+Clone this repository and open the [RendererGallery Xcode project](Examples/RendererGallery/RendererGallery.xcodeproj). Select the **RendererGallery** scheme, choose an iPhone or iPad simulator, and press **Run**.
+
+Browse the bundled examples, edit a form, or tap Play on the music card to inspect the action your app would receive. The gallery captures actions locally. It links the Swift package from this checkout, so changes to the renderer appear the next time you build.
+
 ## Install with Swift Package Manager
 
 In Xcode, choose **File > Add Package Dependencies**, enter `https://github.com/bug-origin/iOSAgentRenderer.git`, and select version `0.2.1` or a compatible later version. Add **AgentRenderer** and **AgentRendererCore** to the target that displays the cards.

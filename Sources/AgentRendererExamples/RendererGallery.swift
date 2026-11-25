@@ -6,12 +6,19 @@ import AgentRendererCore
 /// Embed in an iOS 17+ host or Xcode preview. This gallery captures actions locally; it never calls a backend.
 @MainActor
 public struct RendererGallery: View {
-    @State private var selection: String? = RendererExample.names.first
+    @State private var selection: String?
     private static let titles = Dictionary(uniqueKeysWithValues: RendererExample.names.map { name in
         (name, (try? RendererExample.load(name).title) ?? name)
     })
 
-    public init() {}
+    public init() {
+        self.init(initialSelection: RendererExample.names.first)
+    }
+
+    /// Pass nil to open the example list first on iPhone.
+    public init(initialSelection: String?) {
+        _selection = State(initialValue: initialSelection)
+    }
 
     public var body: some View {
         NavigationSplitView {
